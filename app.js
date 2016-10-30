@@ -74,7 +74,7 @@
   function resetAllFields() {
     ['description', 'tags', 'Effort', 'Impact', 'context', 'datepicker'].forEach(id => {
       $(`#${id}`).val('');
-
+      $('#tags').data().tagsinput.removeAll();
       setFocusToTextBox();
 
     });
