@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+		body {
+			background: #ececec;
+		  -webkit-user-select: none;
+  		user-select: none;
+		}
+		img.notify-image {
+	    width: 52px;
+	    height: 52px;
+  	}
+		span.notify-title {
+	    flex: 1;
+	    overflow: hidden;
+	    max-height: 52px;
+	    max-width: 360px;
+	    text-overflow: ellipsis;
+	    white-space: nowrap;
+	    font-weight: 500;
+	  }
+
+ 		span.notify-desc {
+	    flex: 1;
+	    overflow: hidden;
+	    max-height: 52px;
+		  max-width: 360px;
+	    white-space: nowrap;
+	    color: grey;
+	    font-size: 0.8em;
+	    font-weight: 600;
+  	}
+  	.notify-container, .notify-content {
+  		display: flex;
+  	}
+  	.notify-content {
+  		flex: 1;
+  		flex-direction: column;
+  	}
+		</style>
+	</head>
+	<body>
+		<font face="arial" size="2">
+		<div class="notify-container">
+			<img class="notify-image" src="images/note.png">
+			<div class="notify-content">
+				<span class="notify-title">
+					<!-- REPLACE TITLE -->
+				</span>
+				<span class="notify-desc">
+					<!-- REPLACE DESC -->
+				</span>
+			</div>
+
+		</div>
+		<script type="text/javascript">
+			setTimeout(window.close.bind(window), 1500);
+		</script>
+	</body>
+</html>
