@@ -75,13 +75,14 @@ function onDoneTitle(title) {
 function createBrowserWindow(show = true) {
   var { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
   mainWindow = new BrowserWindow({
-    width: 300 | 0,
-    height: 820,
+    frame: true,
+    width: 277 | 0,
+    height: 600,
     maxHeight: height,
     maxWidth: width,
-    minWidth: 300,
-    minHeight: 820,
-    x: (width - (300)) | 0,
+    minWidth: 277,
+    minHeight: 600,
+    x: (width - (277)) | 0,
     y: 10,
     title: "Sunlight",
     // turn on causes issues like crashing at time
@@ -89,6 +90,7 @@ function createBrowserWindow(show = true) {
     nodeIntegration: "iframe",
     webPreferences: {
       webSecurity: false
+
     }
   });
 
@@ -344,7 +346,6 @@ function createOrUpdateNote(meta, create, cb = () => {}) {
     <!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
     <en-note>
       <em>
-        ${context}
       </em>
     </en-note>
   `;
@@ -357,8 +358,11 @@ function createOrUpdateNote(meta, create, cb = () => {}) {
   }
 
   var attributes = new Evernote.NoteAttributes();
+  /*
   attributes.reminderTime = meta.reminderTime;
   attributes.reminderOrder = meta.priority;
+  */
+
   attributes.sourceApplication = 'sunshine';
   note.attributes = attributes;
 
@@ -384,6 +388,7 @@ function createOrUpdateNote(meta, create, cb = () => {}) {
       noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "description", `${meta.description}`, (e) => {
         if (e) console.log(e);
       });
+
       noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "context", `${meta.context}`, (e) => {
         if (e) console.log(e);
       });
@@ -466,9 +471,9 @@ function createNotificationWindow(err, title, notebook, description, done = fals
 
   var { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
   var options = {
-    width: 420,
-    height: 68,
-    x: width - 420,
+    width: 375,
+    height: 83,
+    x: width - 375,
     y: 20,
     title: "Sunlight",
     alwaysOnTop: true,
