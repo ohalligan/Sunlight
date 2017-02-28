@@ -14,6 +14,7 @@
   ];
 
   // set reminder as tomorrow
+
   function setTomorrow() {
     var today = new Date();
     var date = today.getDate() + 1;
@@ -38,19 +39,20 @@
     title = title.replace('▢', '✓')
     return `${title} DONE on ${toDateString(new Date())}`;
   }
-
+/*
   function getTomorrow() {
     var tomorrow = new Date(Date.now() + 86400000);
     var ts = tomorrow.getTime();
     ts -= ts % 86400000;
     return new Date(ts);
   }
-
+*/
+/*
   function getReminderDate() {
     var reminder = $('#datepicker').val();
     return reminder ? new Date(reminder) : getTomorrow();
   }
-
+*/
   function getTitle() {
     var impact = +($('#Impact').val());
     var effort = +($('#Effort').val());
@@ -74,12 +76,12 @@
   function resetAllFields() {
     ['description', 'tags', 'Effort', 'Impact', 'context', 'datepicker'].forEach(id => {
       $(`#${id}`).val('');
-      $('#tags').data().tagsinput.removeAll();
+
       setFocusToTextBox();
 
     });
   }
-
+/*
   function updateReminder() {
     var impact = +($('#Impact').val());
     var effort = +($('#Effort').val());
@@ -88,23 +90,26 @@
       setTomorrow();
     }
   }
-
+*/
 
   window.sunshine = {
 
     prioritize: () => {
+      /*
       updateReminder();
+      */
       var description = $('#description').val();
       if (!description.trim().length) return;
       var cmd = !enote.reprioritize ? 'application:create-note' : 'application:update-note';
       var impact = +($('#Impact').val());
       var effort = +($('#Effort').val());
-      var tags = $('#tags').data().tagsinput.itemsArray.join(',');
-
+      // var tags = $('#tags').data().tagsinput.itemsArray.join(',');
+      var tags = ""
+      /*
       tags = tags.replace(/(not )?done,?/, '');
       tags = tags.replace(/impact:\s\d+,?/, '');
       tags = tags.replace(/effort:\s\d+,?/, '');
-
+      */
       if (impact > 0 || effort > 0) {
         if (tags) tags += ',';
         tags += "not done,impact: " + impact + ",effort: " + effort;
@@ -113,17 +118,20 @@
         nname: $('#nname').val(),
         title: `${getTitle()} ${description.trim()}`,
         description: description,
-        context: $('#context').val(),
         priority: (calculatePriority() * 1000) | 0,
         tags,
         impact,
+        reminderOrder:0,
+        reminderDoneTime:654654654,
+        reminderTime:0,
         effort,
         notebooks: enote.notebooks,
-        reminderTime: getReminderDate().getTime()
       });
     },
     openNote: () => {
+      /*
       updateReminder();
+      */
       var description = $('#description').val();
       if (!description.trim().length) return;
       var impact = +($('#Impact').val());
@@ -151,7 +159,9 @@
         impact,
         effort,
         notebooks: enote.notebooks,
+        /*
         reminderTime: getReminderDate().getTime()
+        */
       });
       enote.reprioritize = reprioritize;
     },
@@ -186,11 +196,12 @@
 
   $('#description').focus();
 
-  function fillFields({ description, impact, effort, reminder, context, tags, nname }) {
-  	console.log({ description, impact, effort, reminder, context, tags, nname })
+  function fillFields({ description, impact, effort, context, tags, nname }) {
+  	console.log({ description, impact, effort, context, tags, nname })
     $('#description').val(description);
     $('#Impact').val(impact);
     $('#Effort').val(effort);
+/* date picker
 
     var d = new Date(reminder);
     var date = d.getDate();
@@ -201,12 +212,15 @@
     date = date < 10 ? `0${date}` : `${date}`;
 
     $('#datepicker').val(`${month}/${date}/${year}`);
-    $('#context').val(context);
+    */
+    $('#context').val("hello");
     var tagsInput = $('#tags').data().tagsinput;
     tags.split(',').forEach(tagsInput.add.bind(tagsInput));
     $('#nname').val(nname);
   }
 
+  /* trying to open note */
+exports.openNote = sunshine.openNote;
 
   var reprioritizeCallback = (_, { attr, note }) => {
   	console.log({attr, note})
@@ -221,7 +235,8 @@
     if (note.tagNames) {
       attr.fullMap.tags = note.tagNames.join(',');
     }
-    attr.fullMap.reminder = note.attributes.reminderTime;
+   attr.fullMap.reminder = note.attributes.reminderTime;
+
     attr.fullMap.nname = note.notebookName;
     fillFields(attr.fullMap);
     $('#priority').addClass('hide');

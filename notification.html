@@ -1,16 +1,6 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script>
-		require('electron-cookies')
-		</script>
-		<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-T7FKRQ');</script>
-<!-- End Google Tag Manager -->
 		<style>
 		body {
 			background: #ececec;
@@ -18,24 +8,84 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   		user-select: none;
 		}
 		img.notify-image {
-	    width: 52px;
-	    height: 52px;
+	    height: 83px;
+			position: absolute;
+			left:-10px;
+			top:0px;
   	}
+
+		img.open-image {
+			height: 90px;
+			position: absolute;
+			right:25px;
+			top:-2px;
+
+
+		}
+		img.open-image:hover{
+		 background-color:transparent;
+		 opacity:0.50;
+		}
 		span.notify-title {
 	    flex: 1;
 	    overflow: hidden;
-	    max-height: 52px;
-	    max-width: 360px;
+	    max-height: 83px;
+	    max-width: 375px;
 	    text-overflow: ellipsis;
 	    white-space: nowrap;
 	    font-weight: 500;
 	  }
+.titleText{
+	font-family: 'ArialRoundedMTBold';
+	 font-size: 19px;
+	 color: #000000;
+	 letter-spacing: 1.7px;
+	 margin-top: 10px;
+	 margin-bottom: 10px;
+	 margin-left: 105px;
 
+}
+.open-div{
+	font-family: 'ArialRoundedMTBold';
+	 font-size: 19px;
+	 color: #000000;
+	 position:absolute;
+	 left:277px;
+	 top:0;
+}
+
+.descText{
+/* I’ve added a level 6: */
+font-family: BanglaSangamMN;
+position: absolute;
+font-size: 10px;
+color: #000000;
+letter-spacing: 0.71px;
+line-height: 15px;
+margin-left: 105px;
+word-wrap: normal;
+width: 160px;
+}
+.col1 {
+
+    float: left;
+}
+.col2 {
+
+    float: none;
+}
+.col3 {
+
+    float: right;
+}
+.widthhh{
+	width:300px;
+}
  		span.notify-desc {
 	    flex: 1;
 	    overflow: hidden;
-	    max-height: 52px;
-		  max-width: 360px;
+	    max-height: 90px;
+		  max-width: 277px;
 	    white-space: nowrap;
 	    color: grey;
 	    font-size: 0.8em;
@@ -49,28 +99,48 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   		flex-direction: column;
   	}
 		</style>
+		<link rel="stylesheet" href="css/style.css">
 	</head>
-	<body>
-		<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T7FKRQ"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-		<font face="arial" size="2">
+	<body style="overflow: hidden">
+
+		<div class="widthhh"><div class="col1">
+		<img class="notify-image" src="images/wave.png">
+	</div>
+<div class="col2">
+<div class="titleText">
+	You got it!
+</div>
+<div class="descText">I've added that to your priority list. Now, get after it!</div>
+</div>
+<div class="col3"><a href="#" onclick="sunshine.openNote()"><img class="open-image" src="images/open-group.png"></div>
+</a></div>
+
+
+<!--
 		<div class="notify-container">
-			<img class="notify-image" src="images/note.png">
+		-->
+
+			<!--
 			<div class="notify-content">
 				<span class="notify-title">
-					<!-- REPLACE TITLE -->
+-->
+<!-- REPLACE TITLE -->
+<!--
 				</span>
 				<span class="notify-desc">
-					<!-- REPLACE DESC -->
+-->
+<!-- REPLACE DESC -->
+<!--
 				</span>
 			</div>
 
 		</div>
-		<script type="text/javascript">
+-->
 
-			setTimeout(window.close.bind(window), 1500);
+		<script type="text/javascript">
+			setTimeout(window.close.bind(window), 2000);
 		</script>
+
+
 	</body>
 </html>
