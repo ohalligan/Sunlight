@@ -12,7 +12,17 @@
   delete window.exports;
   delete window.module;
   $("input").tagsinput('')
+  require('electron-cookies')
 </script>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T7FKRQ');</script>
+<!-- End Google Tag Manager -->
+
 <script type="text/javascript" src="js/jquery-1.12.4.js"></script>
 <script type="text/javascript" src="js/jsOAuth-1.3.7.min.js"></script>
 <script type="text/javascript" src="js/thriftjs.js"></script>
@@ -68,6 +78,11 @@
 
 
 <body style="overflow: hidden">
+
+  <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T7FKRQ"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
   <!-- escape key -->
   <script>
     $(document).keydown(function(e) {
