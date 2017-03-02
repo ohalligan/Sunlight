@@ -427,6 +427,10 @@ electron.ipcMain.on('application:open-new-note', (sender, meta) => {
   createNewNote(meta);
 });
 
+electron.ipcMain.on('application:v2open-new-note', (yesOpen) => {
+  openAppleNote();
+});
+
 function requestAccessToken(client, cb) {
   client.getAccessToken(oauthStore.oauthToken, oauthStore.oauthTokenSecret, oauthStore.oauth_verifier,
     function(error, oauthAccessToken, oauthAccessTokenSecret, results) {
@@ -488,7 +492,8 @@ function createNotificationWindow(err, title, notebook, description, done = fals
   title = title.length > 27 ? `${title.substr(0, 26)}…` : title;
   notebook = notebook.length > 18 ? `${notebook.substr(0, 17)}…` : notebook;
   description = description.length > 57 ? `${description.substr(0, 56)}…` : description;
-  lastNotitification = { heading: `${title} ${done ? '' : 'added to "'}${notebook}${done ? '' : '"'}`, desc: description };
+//  lastNotitification = { heading: `${title} ${done ? '' : 'added to "'}${notebook}${done ? '' : '"'}`, desc: description };
+  lastNotitification = { heading: ``, desc: description };
   // and load given note the url.
   broswer.loadURL('http://localhost:53546' + __dirname + '/notification.html');
 
@@ -507,6 +512,7 @@ function createNewNote(meta) {
     }
   });
 }
+
 
 function doneNoteWithGUID(note, meta, cb) {
   meta.title = onDoneTitle(note.title);

@@ -185,6 +185,10 @@ reminderTime:0,
         reminderTime: getReminderDate().getTime()
       });
       resetAllFields();
+    },
+    v2openNote: () => {
+      var yesOpen=1
+      electron.ipcRenderer.send('application:v2open-new-note', yesOpen);
     }
   };
 
@@ -219,8 +223,6 @@ reminderTime:0,
     $('#nname').val(nname);
   }
 
-  /* trying to open note */
-exports.openNote = sunshine.openNote;
 
   var reprioritizeCallback = (_, { attr, note }) => {
   	console.log({attr, note})
