@@ -7,6 +7,9 @@ var http = require('http');
 var childProcess = require('child_process');
 var url = require('url');
 
+require('electron-debug')({showDevTools: true});
+let win;
+
 global.Evernote = require('evernote').Evernote;
 var globalShortcut = electron.globalShortcut;
 // Keep a global reference of the window object, if you don't, the window will
@@ -486,7 +489,7 @@ function createNotificationWindow(err, title, notebook, description, done = fals
     focusable: false,
     fullscreen: false,
     fullscreenable: false
-  };
+  }
 
   var broswer = new BrowserWindow(options);
   title = title.length > 27 ? `${title.substr(0, 26)}…` : title;
