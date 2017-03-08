@@ -7,7 +7,7 @@ var http = require('http');
 var childProcess = require('child_process');
 var url = require('url');
 
-require('electron-debug')({showDevTools: true});
+require('electron-debug')({showDevTools: false});
 let win;
 
 global.Evernote = require('evernote').Evernote;
