@@ -39,20 +39,20 @@
     title = title.replace('▢', '✓')
     return `${title} DONE on ${toDateString(new Date())}`;
   }
-/*
+
   function getTomorrow() {
     var tomorrow = new Date(Date.now() + 86400000);
     var ts = tomorrow.getTime();
     ts -= ts % 86400000;
     return new Date(ts);
   }
-*/
-/*
+
+
   function getReminderDate() {
     var reminder = $('#datepicker').val();
     return reminder ? new Date(reminder) : getTomorrow();
   }
-*/
+
   function getTitle() {
     var impact = +($('#Impact').val());
     var effort = +($('#Effort').val());
@@ -137,7 +137,7 @@
       var impact = +($('#Impact').val());
       var effort = +($('#Effort').val());
       // var tags = $('#tags').data().tagsinput.itemsArray.join(',');
-      var tags = ""
+      var tags = "";
       /*
       tags = tags.replace(/(not )?done,?/, '');
       tags = tags.replace(/impact:\s\d+,?/, '');

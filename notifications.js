@@ -1,7 +1,7 @@
 'use strict';
 
 // const electronCookies = require('electron-cookies');
-const async = require('async');
+const async = require('async-waterfall');
 
 function onClick(){
 async.waterfall([
