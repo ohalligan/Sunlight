@@ -503,6 +503,35 @@ function createNotificationWindow(err, title, notebook, description, done = fals
   broswer.show();
 }
 
+function createNotificationWindowSuccess(err, title, notebook, description, done = false) {
+
+  var { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
+  var options = {
+    width: 375,
+    height: 83,
+    x: width - 375,
+    y: 20,
+    title: "Sunlight",
+    alwaysOnTop: true,
+    frame: false,
+    resizable: false,
+    focusable: false,
+    fullscreen: false,
+    fullscreenable: false
+  }
+
+  var broswer = new BrowserWindow(options);
+  title = title.length > 27 ? `${title.substr(0, 26)}…` : title;
+  notebook = notebook.length > 18 ? `${notebook.substr(0, 17)}…` : notebook;
+  description = description.length > 57 ? `${description.substr(0, 56)}…` : description;
+//  lastNotitification = { heading: `${title} ${done ? '' : 'added to "'}${notebook}${done ? '' : '"'}`, desc: description };
+  lastNotitification = { heading: ``, desc: description };
+  // and load given note the url.
+  broswer.loadURL('http://localhost:53546' + __dirname + '/notification_success.html');
+
+  broswer.show();
+}
+
 function createNewNote(meta) {
   createOrUpdateNote(meta, true, (err, note, noteURL) => {
     if (!err) {
@@ -523,7 +552,7 @@ function doneNoteWithGUID(note, meta, cb) {
     cb(err, note);
     if (!err) {
       syncEvernote();
-      createNotificationWindow(null, 'Sunlight task completed!', '', '', true);
+      createNotificationWindowSuccess(null, 'Sunlight task completed!', '', '', true);
     }
   });
 }
