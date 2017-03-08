@@ -104,7 +104,7 @@
       var impact = +($('#Impact').val());
       var effort = +($('#Effort').val());
       // var tags = $('#tags').data().tagsinput.itemsArray.join(',');
-      var tags = ""
+      var tags = "";
       /*
       tags = tags.replace(/(not )?done,?/, '');
       tags = tags.replace(/impact:\s\d+,?/, '');
@@ -166,7 +166,8 @@ reminderTime:0,
       enote.reprioritize = reprioritize;
     },
     markAsComplete: () => {
-      var tags = $('#tags').data().tagsinput.itemsArray.join(',').replace(/not done,?/, '');
+      // var tags = $('#tags').data().tagsinput.itemsArray.join(',').replace(/not done,?/, '');
+      var tags = ""
       if (tags) tags += ',';
       tags += 'done';
       var impact = +($('#Impact').val());
@@ -182,7 +183,7 @@ reminderTime:0,
         impact,
         effort,
         notebooks: enote.notebooks,
-        reminderTime: getReminderDate().getTime()
+        // reminderTime: getReminderDate().getTime()
       });
       resetAllFields();
     },
@@ -218,8 +219,8 @@ reminderTime:0,
     $('#datepicker').val(`${month}/${date}/${year}`);
     */
     $('#context').val("hello");
-    var tagsInput = $('#tags').data().tagsinput;
-    tags.split(',').forEach(tagsInput.add.bind(tagsInput));
+    // var tagsInput = $('#tags').data().tagsinput;
+    // tags.split(',').forEach(tagsInput.add.bind(tagsInput));
     $('#nname').val(nname);
   }
 
