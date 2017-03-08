@@ -458,7 +458,7 @@ function requestOAuthToken(client, cb) {
 function doneNote() {
   findNote((info) => {
     reprioritizeNote = info.note;
-    mainWindow.webContents.send('sunshine:reprioritize', info);
+  //  mainWindow.webContents.send('sunshine:reprioritize', info);
     mainWindow.webContents.send('sunshine:mark-as-complete', info);
   });
 }
