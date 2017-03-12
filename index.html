@@ -138,7 +138,48 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
+
+<!-- electron drag and drop -->
 <script>
+    (function () {
+        var holder = document.getElementById('dragandrophandler');
+        var allFiles = [];
+
+        holder.ondragover = () => {
+            return false;
+        };
+
+        holder.ondragleave = () => {
+            return false;
+        };
+
+        holder.ondragend = () => {
+            return false;
+        };
+
+        holder.ondrop = (e) => {
+            e.preventDefault();
+
+            for (let f of e.dataTransfer.files) {
+                console.log('File(s) you dragged here: ', f.path)
+                console.log('File List: ', e.dataTransfer.files)
+                console.log('Uploaded Count: ', e.dataTransfer.files.length)
+                allFiles = allFiles.concat(f.path);
+
+            }
+            console.log('Total Count: ', allFiles.length)
+            console.log('All Files: ', allFiles)
+            return false;
+
+
+        };
+    })();
+</script>
+
+<!-- end electron drag and drop -->
+
+
+<!-- <script>
 function sendFileToServer(formData,status)
 {
     var uploadURL ="http://webfolio.codeweavers.in/form/upload.php"; //Upload URL
@@ -280,7 +321,7 @@ $(document).on('drop', function (e)
 });
 
 });
-</script>
+</script> -->
 <!-- drag and drop end -->
 
 
