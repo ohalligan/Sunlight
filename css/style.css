@@ -391,6 +391,10 @@ input.btn-form:hover{
  opacity:0.75;
 }
 
+
+
+
+
 #dragandrophandler{
 	background-image:url('../images/bg.png');
 	background-repeat:no-repeat;
@@ -496,6 +500,21 @@ margin-right:5px;
     cursor:pointer;
     vertical-align:top
     }
+
+    /* file list counter */
+    .notification-counter {
+        position: absolute;
+        top: 30%;
+        left: 42%;
+
+        background-color: rgba(93, 69, 154, 1);
+        color: #fff;
+        border-radius: 100%;
+        padding: 2px 8px;
+        font: 14px BanglaSangamMN-Bold;
+    }
+
+
 div#dragandrophandler::before{
 	background-image:url('../images/upload-sign.png');
 	background-repeat:no-repeat;
@@ -509,6 +528,8 @@ div#dragandrophandler::before{
 	width:100%;
 
 }
+
+
 div#dragandrophandler::after {
     content: '';
     position: absolute;

@@ -274,9 +274,10 @@ reminderTime:0,
 
 
 // <!-- electron drag and drop -->
+var allFiles = [];
     (function () {
         var holder = document.getElementById('dragandrophandler');
-        var allFiles = [];
+
 
         holder.ondragover = () => {
             return false;
@@ -302,11 +303,16 @@ reminderTime:0,
             }
             console.log('Total Count: ', allFiles.length)
             console.log('All Files: ', allFiles)
+            updateCounter();
             return false;
+
+
 
 
         };
     })();
+function updateCounter(){
+document.getElementById('allFileCount').innerHTML = allFiles.length;
 
-
+}
 // <!-- end electron drag and drop -->
