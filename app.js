@@ -271,3 +271,42 @@ reminderTime:0,
   electron.ipcRenderer.on('sunshine:url-note', reprioritizeCallback);
 
 })();
+
+
+// <!-- electron drag and drop -->
+    (function () {
+        var holder = document.getElementById('dragandrophandler');
+        var allFiles = [];
+
+        holder.ondragover = () => {
+            return false;
+        };
+
+        holder.ondragleave = () => {
+            return false;
+        };
+
+        holder.ondragend = () => {
+            return false;
+        };
+
+        holder.ondrop = (e) => {
+            e.preventDefault();
+
+            for (let f of e.dataTransfer.files) {
+                console.log('File(s) you dragged here: ', f.path)
+                console.log('File List: ', e.dataTransfer.files)
+                console.log('Uploaded Count: ', e.dataTransfer.files.length)
+                allFiles = allFiles.concat(f.path);
+
+            }
+            console.log('Total Count: ', allFiles.length)
+            console.log('All Files: ', allFiles)
+            return false;
+
+
+        };
+    })();
+
+
+// <!-- end electron drag and drop -->
