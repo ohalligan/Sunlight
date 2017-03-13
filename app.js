@@ -27,6 +27,8 @@
     $('#datepicker').val(`${month}/${date}/${year}`);
   }
 
+
+
   function setFocusToTextBox() {
     document.getElementById("description").focus();
   }
@@ -127,6 +129,8 @@
         effort,
         notebooks: enote.notebooks,
       });
+      document.getElementById('notification-container').style.display = 'none';
+      allFiles = [];
     },
     openNote: () => {
       /*
@@ -313,6 +317,8 @@ var allFiles = [];
     })();
 function updateCounter(){
 document.getElementById('allFileCount').innerHTML = allFiles.length;
+document.getElementById('notification-container').style.display = 'block';
+
 
 }
 // <!-- end electron drag and drop -->
