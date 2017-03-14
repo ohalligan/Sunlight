@@ -6,6 +6,10 @@ var router = express();
 var http = require('http');
 var childProcess = require('child_process');
 var url = require('url');
+var md5 = require('md5');
+var crypto = require('crypto');
+var fs = require('fs');
+var mime = require('mime');
 
 require('electron-debug')({showDevTools: false});
 let win;
@@ -118,9 +122,15 @@ function copySelection() {
   }
 }
 
-function openAppleNote() {
+function openAppleNote(callback) {
   if (process.platform === 'darwin') {
-    childProcess.spawnSync('osascript', [path.join(__dirname, 'openEnote.scpt')]);
+    var result = childProcess.spawn('osascript', [path.join(__dirname, 'openEnote.scpt')]);
+    result.stdout.on('close', function(data) {
+      if (callback != null) {
+        callback(1);
+      }
+    });
+
   }
 }
 
@@ -327,6 +337,37 @@ electron.ipcMain.on('application:mark-as-complete', function(sender, meta) {
   });
 });
 
+function attachFile(index, files, body, resources, callback) {
+  if (index < files.length) {
+
+    fs.readFile(files[index], function(err, data) {
+      if (err != null) callback(body, resources);
+
+      var binaryResource = data;
+      var fileMime = mime.lookup(files[index]);
+      var fileName = files[index];
+      var md5Hash = md5(binaryResource);
+
+      const resourceAttributes = new Evernote.ResourceAttributes({
+          fileName: fileName
+        });
+
+      const resource = new Evernote.Resource({
+        data: new Evernote.Data({body: binaryResource}),
+        mime: fileMime,
+        attributes: resourceAttributes
+      });
+
+      resources.push(resource);
+      body += '<en-media type="' + fileMime + '" hash="' + md5Hash + '"/>';
+
+      attachFile(index + 1, files, body, resources, callback);
+    });
+  } else {
+    callback(body, resources);
+  }
+}
+
 function createOrUpdateNote(meta, create, cb = () => {}) {
   var note = new Evernote.Note();
   var notebookName = meta.nname;
@@ -348,74 +389,79 @@ function createOrUpdateNote(meta, create, cb = () => {}) {
   var body = `<?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
     <en-note>
-      <em>
-      </em>
-    </en-note>
+      <br /><br />
   `;
 
-  note.content = body;
+  var resources = [];
 
-  var tags = meta.tags;
-  if (tags) {
-    note.tagNames = tags.split(',').map(tag => tag.trim()).filter(tag => tag.length !== 0);
-  }
+  attachFile(0, meta.files, body, resources, (bodyContent, resource_Ary) => {
+    bodyContent += '</en-note>';
 
-  var attributes = new Evernote.NoteAttributes();
-  /*
-  attributes.reminderTime = meta.reminderTime;
-  attributes.reminderOrder = meta.priority;
-  */
+    note.resources = resource_Ary;
+    note.content = bodyContent;
 
-  attributes.sourceApplication = 'sunshine';
-  note.attributes = attributes;
-
-  var store = oauthStore;
-  var client = new Evernote.Client({ token: store.oauthAccessToken, sandbox: global.sandbox });
-  var noteStore = client.getNoteStore();
-  var run = create ? noteStore.createNote.bind(noteStore) : noteStore.updateNote.bind(noteStore);
-  run(note, (error, note) => {
-    if (error) {
-      console.log(`${EDAMErrorCode[error.errorCode]} error`);
-      // createNotificationWindow(`Error: ${EDAMErrorCode[error.errorCode]}`);
-    } else {
-      console.log(note, ' created');
-      noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "priority", `${meta.priority}`, (e) => {
-        if (e) console.log(e);
-      });
-      noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "impact", `${meta.impact}`, (e) => {
-        if (e) console.log(e);
-      });
-      noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "effort", `${meta.effort}`, (e) => {
-        if (e) console.log(e);
-      });
-      noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "description", `${meta.description}`, (e) => {
-        if (e) console.log(e);
-      });
-
-      noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "context", `${meta.context}`, (e) => {
-        if (e) console.log(e);
-      });
-      noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "tags", `${meta.tags}`, (e) => {
-        if (e) console.log(e);
-      });
-
-      // if (mainWindow) {
-      //   var tokens = client.token.split(':');
-      //   var shardId = tokens.find(t => t.startsWith('S=')).substr(2);
-      //   var userId = tokens.find(t => t.startsWith('U=')).substr(2);
-      //   var noteGuid = note.guid;
-      //   var evernoteURL = `evernote:///view/${userId}/${shardId}/${noteGuid}/${noteGuid}/`;
-      //   global.evernoteURL = evernoteURL;
-      // }
-      mainWindow.webContents.send(create ? 'sunshine:created-note' : 'sunshine:updated-note');
-      // mainWindow.close();
-      // mainWindow = null;
-      syncEvernote();
-      createNotificationWindow(null, note.title.replace(meta.description, ''), meta.nname, meta.description);
+    var tags = meta.tags;
+    if (tags) {
+      note.tagNames = tags.split(',').map(tag => tag.trim()).filter(tag => tag.length !== 0);
     }
-    cb(error, note);
+
+    var attributes = new Evernote.NoteAttributes();
+    /*
+    attributes.reminderTime = meta.reminderTime;
+    attributes.reminderOrder = meta.priority;
+    */
+
+    attributes.sourceApplication = 'sunshine';
+    note.attributes = attributes;
+
+    var store = oauthStore;
+    var client = new Evernote.Client({ token: store.oauthAccessToken, sandbox: global.sandbox });
+    var noteStore = client.getNoteStore();
+    var run = create ? noteStore.createNote.bind(noteStore) : noteStore.updateNote.bind(noteStore);
+    run(note, (error, note) => {
+      if (error) {
+        console.log(`${EDAMErrorCode[error.errorCode]} error`);
+        // createNotificationWindow(`Error: ${EDAMErrorCode[error.errorCode]}`);
+      } else {
+        console.log(note, ' created');
+        noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "priority", `${meta.priority}`, (e) => {
+          if (e) console.log(e);
+        });
+        noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "impact", `${meta.impact}`, (e) => {
+          if (e) console.log(e);
+        });
+        noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "effort", `${meta.effort}`, (e) => {
+          if (e) console.log(e);
+        });
+        noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "description", `${meta.description}`, (e) => {
+          if (e) console.log(e);
+        });
+
+        noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "context", `${meta.context}`, (e) => {
+          if (e) console.log(e);
+        });
+        noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "tags", `${meta.tags}`, (e) => {
+          if (e) console.log(e);
+        });
+
+        // if (mainWindow) {
+        //   var tokens = client.token.split(':');
+        //   var shardId = tokens.find(t => t.startsWith('S=')).substr(2);
+        //   var userId = tokens.find(t => t.startsWith('U=')).substr(2);
+        //   var noteGuid = note.guid;
+        //   var evernoteURL = `evernote:///view/${userId}/${shardId}/${noteGuid}/${noteGuid}/`;
+        //   global.evernoteURL = evernoteURL;
+        // }
+        mainWindow.webContents.send(create ? 'sunshine:created-note' : 'sunshine:updated-note');
+        // mainWindow.close();
+        // mainWindow = null;
+        syncEvernote();
+        createNotificationWindow(null, note.title.replace(meta.description, ''), meta.nname, meta.description);
+      }
+      cb(error, note);
+    });
+    mainWindow.minimize();
   });
-  mainWindow.minimize();
 }
 
 electron.ipcMain.on('application:update-note', (sender, meta) => {
@@ -430,8 +476,12 @@ electron.ipcMain.on('application:open-new-note', (sender, meta) => {
   createNewNote(meta);
 });
 
-electron.ipcMain.on('application:v2open-new-note', (yesOpen) => {
-  openAppleNote();
+electron.ipcMain.on('application:v2open-new-note', (event, arg) => {
+  openAppleNote((pid) => {
+    if (pid != null) {
+      event.sender.send('application:v2open-new-note-reply', 1);
+    }
+  });
 });
 
 function requestAccessToken(client, cb) {

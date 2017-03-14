@@ -70,8 +70,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       }
     </style>
   <![endif]-->
-<!-- JS
-  ================================================== -->
+<!-- JS ================================================== -->
 
 </head>
 
@@ -80,9 +79,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <body style="overflow: hidden">
 
   <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T7FKRQ"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T7FKRQ"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  
   <!-- escape key -->
   <script>
     $(document).keydown(function(e) {
@@ -128,19 +128,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- DRAG AND DROP -->
 
-
-
-
-
 <div id="dragandrophandler">Add Files
 <div class="notification-counter" id="notification-container" style="display:none;" ><span id="allFileCount">1</span></div>
 </div>
 <br>
 <div id="status1"></div>
-
    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
-
 </body>
 <script src="js/bootstrap-tagsinput.min.js"></script>
 <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
@@ -153,7 +146,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     var settings = $('.add_details_content_button '),
       menu = $('.context_div_bg ');
-    settings.on('click ', function() {
+      settings.on('click ', function() {
       menu.fadeToggle('fast ');
       return false;
     });
@@ -201,16 +194,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </script>
 <script type="text/javascript" src="app.js"></script>
 <script>
-function searchKeyPress(e)
-{
-// look for window.event in case event isn't passed in
-e = e || window.event;
-if (e.keyCode == 13)
-{
-    document.getElementById('prioritize').click();
-    return false;
-}
-return true;
-}
+  function searchKeyPress(e)
+  {
+  // look for window.event in case event isn't passed in
+  e = e || window.event;
+  if (e.keyCode == 13)
+  {
+      document.getElementById('prioritize').click();
+      return false;
+  }
+  return true;
+  }
 </script>
 </html>

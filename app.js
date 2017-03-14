@@ -128,9 +128,9 @@
         reminderTime:0,
         effort,
         notebooks: enote.notebooks,
+        files: allFiles,
       });
       document.getElementById('notification-container').style.display = 'none';
-      allFiles = [];
     },
     openNote: () => {
       /*
@@ -162,8 +162,8 @@
         tags,
         impact,
         reminderOrder:0,
-reminderDoneTime:654654654,
-reminderTime:0,
+        reminderDoneTime:654654654,
+        reminderTime:0,
         effort,
         notebooks: enote.notebooks,
       });
@@ -210,7 +210,8 @@ reminderTime:0,
     $('#description').val(description);
     $('#Impact').val(impact);
     $('#Effort').val(effort);
-/* date picker
+
+    /* date picker
 
     var d = new Date(reminder);
     var date = d.getDate();
@@ -272,6 +273,10 @@ reminderTime:0,
     electron.ipcRenderer.send('application:update-note-title', onDoneTitle(note.title));
   });
 
+  electron.ipcRenderer.on('application:v2open-new-note-reply', (event, arg) => {
+    window.close();
+  });
+
   electron.ipcRenderer.on('sunshine:url-note', reprioritizeCallback);
 
 })();
@@ -309,16 +314,11 @@ var allFiles = [];
             console.log('All Files: ', allFiles)
             updateCounter();
             return false;
-
-
-
-
         };
     })();
+
 function updateCounter(){
-document.getElementById('allFileCount').innerHTML = allFiles.length;
-document.getElementById('notification-container').style.display = 'block';
-
-
+  document.getElementById('allFileCount').innerHTML = allFiles.length;
+  document.getElementById('notification-container').style.display = 'block';
 }
 // <!-- end electron drag and drop -->
