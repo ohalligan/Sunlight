@@ -369,6 +369,8 @@ function attachFile(index, files, body, resources, callback) {
 }
 
 function createOrUpdateNote(meta, create, cb = () => {}) {
+
+  console.log("Meta", meta);
   var note = new Evernote.Note();
   var notebookName = meta.nname;
   var notebook = (meta.notebooks || []).find(({ name }) => name === notebookName);
@@ -394,11 +396,77 @@ function createOrUpdateNote(meta, create, cb = () => {}) {
 
   var resources = [];
 
-  attachFile(0, meta.files, body, resources, (bodyContent, resource_Ary) => {
-    bodyContent += '</en-note>';
+  if (meta.files) {
+    attachFile(0, meta.files, body, resources, (bodyContent, resource_Ary) => {
+      bodyContent += '</en-note>';
 
-    note.resources = resource_Ary;
-    note.content = bodyContent;
+      note.resources = resource_Ary;
+      note.content = bodyContent;
+
+      var tags = meta.tags;
+      if (tags) {
+        note.tagNames = tags.split(',').map(tag => tag.trim()).filter(tag => tag.length !== 0);
+      }
+
+      var attributes = new Evernote.NoteAttributes();
+      /*
+      attributes.reminderTime = meta.reminderTime;
+      attributes.reminderOrder = meta.priority;
+      */
+
+      attributes.sourceApplication = 'sunshine';
+      note.attributes = attributes;
+
+      var store = oauthStore;
+      var client = new Evernote.Client({ token: store.oauthAccessToken, sandbox: global.sandbox });
+      var noteStore = client.getNoteStore();
+      var run = create ? noteStore.createNote.bind(noteStore) : noteStore.updateNote.bind(noteStore);
+      run(note, (error, note) => {
+        if (error) {
+          console.log(`${EDAMErrorCode[error.errorCode]} error`);
+          // createNotificationWindow(`Error: ${EDAMErrorCode[error.errorCode]}`);
+        } else {
+          console.log(note, ' created');
+          noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "priority", `${meta.priority}`, (e) => {
+            if (e) console.log(e);
+          });
+          noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "impact", `${meta.impact}`, (e) => {
+            if (e) console.log(e);
+          });
+          noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "effort", `${meta.effort}`, (e) => {
+            if (e) console.log(e);
+          });
+          noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "description", `${meta.description}`, (e) => {
+            if (e) console.log(e);
+          });
+
+          noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "context", `${meta.context}`, (e) => {
+            if (e) console.log(e);
+          });
+          noteStore.setNoteApplicationDataEntry(store.oauthAccessToken, note.guid, "tags", `${meta.tags}`, (e) => {
+            if (e) console.log(e);
+          });
+
+          // if (mainWindow) {
+          //   var tokens = client.token.split(':');
+          //   var shardId = tokens.find(t => t.startsWith('S=')).substr(2);
+          //   var userId = tokens.find(t => t.startsWith('U=')).substr(2);
+          //   var noteGuid = note.guid;
+          //   var evernoteURL = `evernote:///view/${userId}/${shardId}/${noteGuid}/${noteGuid}/`;
+          //   global.evernoteURL = evernoteURL;
+          // }
+          mainWindow.webContents.send(create ? 'sunshine:created-note' : 'sunshine:updated-note');
+          // mainWindow.close();
+          // mainWindow = null;
+          syncEvernote();
+          createNotificationWindow(null, note.title.replace(meta.description, ''), meta.nname, meta.description);
+        }
+        cb(error, note);
+      });
+      mainWindow.minimize();
+    });
+  } else {
+    body += '</en-note>';
 
     var tags = meta.tags;
     if (tags) {
@@ -461,7 +529,8 @@ function createOrUpdateNote(meta, create, cb = () => {}) {
       cb(error, note);
     });
     mainWindow.minimize();
-  });
+  }
+  
 }
 
 electron.ipcMain.on('application:update-note', (sender, meta) => {
