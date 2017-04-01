@@ -11,7 +11,7 @@ var crypto = require('crypto');
 var fs = require('fs');
 var mime = require('mime');
 
-require('electron-debug')({showDevTools: false});
+require('electron-debug')({showDevTools: true});
 let win;
 
 global.Evernote = require('evernote').Evernote;
@@ -141,6 +141,43 @@ function syncEvernote() {
   }
 }
 
+function showWindow(){
+  if (!mainWindow) {
+    createBrowserWindow();
+  }
+  mainWindow.show();
+  mainWindow.focus();
+
+}
+
+function reprioritizeFunction(){
+  copySelection();
+  if (!mainWindow) {
+    createBrowserWindow();
+  }
+  mainWindow.show();
+  mainWindow.focus();
+  mainWindow.setAlwaysOnTop(true);
+  reprioritize();
+
+}
+function viewlistFunction(){
+  if (process.platform === 'darwin') {
+    childProcess.spawnSync('osascript', [path.join(__dirname, 'sortList.scpt')]);
+  }
+
+}
+
+
+function doneFunction(){
+  copySelection();
+  if (!mainWindow) {
+    createBrowserWindow();
+  }
+  mainWindow.hide();
+  mainWindow.minimize();
+  doneNote();
+}
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.on('ready', function() {
@@ -151,18 +188,15 @@ app.on('ready', function() {
   var ret = globalShortcut.register('CommandOrControl+Shift+P', () => {
  var tagsinput="";
  var tagsInput="";
-    if (!mainWindow) {
-      createBrowserWindow();
-    }
-    mainWindow.show();
-    mainWindow.focus();
+ // NONE OF THESE ARE DEFINED YET console.log(resource + '1_' + resources + '2_' + resource_Ary + '3_' + resourceAttributes + '4_' + files + '5_' + bodyContent + '6_' + body + '7_');
+//console.log(bodyContent);
+console.log('hello');
+showWindow();
 
   });
 
   var ret = globalShortcut.register('CommandOrControl+Shift+E', () => {
-    if (process.platform === 'darwin') {
-      childProcess.spawnSync('osascript', [path.join(__dirname, 'sortList.scpt')]);
-    }
+    viewlistFunction();
   });
 
   if (!ret) {
@@ -170,14 +204,7 @@ app.on('ready', function() {
   }
 
   ret = globalShortcut.register('CommandOrControl+Shift+[', () => {
-    copySelection();
-    if (!mainWindow) {
-      createBrowserWindow();
-    }
-    mainWindow.show();
-    mainWindow.focus();
-    mainWindow.setAlwaysOnTop(true);
-    reprioritize();
+    reprioritizeFunction();
   });
 
   if (!ret) {
@@ -185,13 +212,7 @@ app.on('ready', function() {
   }
 
   ret = globalShortcut.register('CommandOrControl+Shift+]', () => {
-    copySelection();
-    if (!mainWindow) {
-      createBrowserWindow();
-    }
-    mainWindow.hide();
-    mainWindow.minimize();
-    doneNote();
+    doneFunction();
   });
 
   if (!ret) {
@@ -239,6 +260,19 @@ app.on('ready', function() {
             { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
             { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
             { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+        ]}, {
+        label: "Tools",
+        submenu: [
+            { label: "New", accelerator: "Shift+CmdOrCtrl+P", selector: "new:",
+            click: () => {  showWindow(); }},
+            { label: "Reprioritize", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:",
+            click: () => {  reprioritizeFunction(); }},
+            { label: "Mark Complete", accelerator: "Shift+CmdOrCtrl+]", selector: "complete:",
+            click: () => {  doneFunction(); }},
+            { type: "separator" },
+            { label: "View Task List", accelerator: "Shift+CmdOrCtrl+E",
+            click: () => {  viewlistFunction(); }
+        }
         ]}
     ];
 
@@ -278,6 +312,7 @@ var loadedFromRequest = false;
 router.get(__dirname + '/index.html', function(req, res) {
   oauthStore.oauth_verifier = req.query.oauth_verifier || oauthStore.oauth_verifier;
   oauthStore.oauth_token = req.query.oauth_token || oauthStore.oauth_token;
+  console.log('T E S T I N G oauth');
 
   if (loadedFromRequest) {
     requestAccessToken(client, function(error) {
@@ -286,9 +321,11 @@ router.get(__dirname + '/index.html', function(req, res) {
         return;
       }
       res.send(content);
+      console.log('first if');
     });
   } else res.send(content);
   loadedFromRequest = false;
+  console.log('second if');
 });
 
 var notificationTemplate = require('fs').readFileSync(__dirname + '/notification.html').toString();
@@ -530,7 +567,7 @@ function createOrUpdateNote(meta, create, cb = () => {}) {
     });
     mainWindow.minimize();
   }
-  
+
 }
 
 electron.ipcMain.on('application:update-note', (sender, meta) => {
@@ -539,6 +576,7 @@ electron.ipcMain.on('application:update-note', (sender, meta) => {
 
 electron.ipcMain.on('application:create-note', (sender, meta) => {
   createOrUpdateNote(meta, true);
+  meta.files=[];
 });
 
 electron.ipcMain.on('application:open-new-note', (sender, meta) => {
