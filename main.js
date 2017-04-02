@@ -190,7 +190,6 @@ app.on('ready', function() {
  var tagsInput="";
  // NONE OF THESE ARE DEFINED YET console.log(resource + '1_' + resources + '2_' + resource_Ary + '3_' + resourceAttributes + '4_' + files + '5_' + bodyContent + '6_' + body + '7_');
 //console.log(bodyContent);
-console.log('hello');
 showWindow();
 
   });
@@ -236,7 +235,7 @@ showWindow();
       findNoteWithGUID(guid, (meta) => {
         reprioritizeNote = meta.note;
         mainWindow.webContents.send('sunshine:url-note', meta);
-        console.log(meta)
+        console.log('meta')
       });
     }
   });
@@ -312,7 +311,6 @@ var loadedFromRequest = false;
 router.get(__dirname + '/index.html', function(req, res) {
   oauthStore.oauth_verifier = req.query.oauth_verifier || oauthStore.oauth_verifier;
   oauthStore.oauth_token = req.query.oauth_token || oauthStore.oauth_token;
-  console.log('T E S T I N G oauth');
 
   if (loadedFromRequest) {
     requestAccessToken(client, function(error) {
@@ -321,11 +319,9 @@ router.get(__dirname + '/index.html', function(req, res) {
         return;
       }
       res.send(content);
-      console.log('first if');
     });
   } else res.send(content);
   loadedFromRequest = false;
-  console.log('second if');
 });
 
 var notificationTemplate = require('fs').readFileSync(__dirname + '/notification.html').toString();
@@ -407,7 +403,7 @@ function attachFile(index, files, body, resources, callback) {
 
 function createOrUpdateNote(meta, create, cb = () => {}) {
 
-  console.log("Meta", meta);
+//  console.log("Meta", meta);
   var note = new Evernote.Note();
   var notebookName = meta.nname;
   var notebook = (meta.notebooks || []).find(({ name }) => name === notebookName);
@@ -432,7 +428,6 @@ function createOrUpdateNote(meta, create, cb = () => {}) {
   `;
 
   var resources = [];
-
   if (meta.files) {
     attachFile(0, meta.files, body, resources, (bodyContent, resource_Ary) => {
       bodyContent += '</en-note>';
@@ -502,6 +497,7 @@ function createOrUpdateNote(meta, create, cb = () => {}) {
       });
       mainWindow.minimize();
     });
+
   } else {
     body += '</en-note>';
 
@@ -567,7 +563,6 @@ function createOrUpdateNote(meta, create, cb = () => {}) {
     });
     mainWindow.minimize();
   }
-
 }
 
 electron.ipcMain.on('application:update-note', (sender, meta) => {
@@ -576,7 +571,9 @@ electron.ipcMain.on('application:update-note', (sender, meta) => {
 
 electron.ipcMain.on('application:create-note', (sender, meta) => {
   createOrUpdateNote(meta, true);
-  meta.files=[];
+  //this is where to clear resources
+  var resources=[];
+console.log(resources);
 });
 
 electron.ipcMain.on('application:open-new-note', (sender, meta) => {
